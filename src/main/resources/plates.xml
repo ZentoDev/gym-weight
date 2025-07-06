@@ -1,0 +1,87 @@
+<weights xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="plates.xsd">
+	<barbell>
+		<weight>10</weight>
+	</barbell>
+	<plates>
+		<plate>
+			<weight>10.0</weight>
+			<material>bumper</material>
+		</plate>
+		<plate>
+			<weight>10.0</weight>
+			<material>bumper</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>bumper</material>
+		</plate>
+		<plate>
+			<weight>5</weight>
+			<material>bumper</material>
+		</plate>
+		<plate>
+			<weight>2.5</weight>
+			<material></material>
+		</plate>
+		<plate>
+			<weight>2.5</weight>
+		</plate>
+		<plate>
+			<weight>2.5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>2.5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>1</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>1</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>0.5</weight>
+			<material>cast iron</material>
+		</plate>
+		<plate>
+			<weight>0.5</weight>
+			<material>cast iron</material>
+		</plate>
+	</plates>
+</weights>
