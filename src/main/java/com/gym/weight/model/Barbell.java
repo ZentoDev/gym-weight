@@ -2,7 +2,6 @@ package com.gym.weight.model;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlElement;
 

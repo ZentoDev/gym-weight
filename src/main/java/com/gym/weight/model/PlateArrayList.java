@@ -11,7 +11,7 @@ public class PlateArrayList extends ArrayList<Plate> implements PlateList{
 	// indicates the class version
 	private static final long serialVersionUID = 1L;
 	
-	@Override
+	/*@Override
 	public TreeMap<Double, Plates> groupPlatesByWeight() {
 		TreeMap<Double, Plates> groupPlates = new TreeMap<>(Comparator.reverseOrder());		
 		// group the plates by weight
@@ -31,7 +31,7 @@ public class PlateArrayList extends ArrayList<Plate> implements PlateList{
 		}
 		return groupPlates;
 	}
-	
+	*/
 	@Override
 	public TreeMap<Double, Integer> countPlatesByWeight() {
 		TreeMap<Double, Integer> groupPlates = new TreeMap<>(Comparator.reverseOrder());		
