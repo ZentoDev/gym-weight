@@ -1,7 +1,10 @@
 package com.gym.weight.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,47 +35,98 @@ public class BarbellService {
 	}
 	
 	
-	private List<Operation> CalcSteps(double targetWeight, Deque<Plate> barbellStack,  Map<Double, Integer> availablePlate) {
-		List<Operation> opList = new ArrayList<>();
-		double actualWeight = 0;
-		
-		if (Double.compare(actualWeight, targetWeight) == 0) {
-			return List.of();
-		}
-		
-		for (Map.Entry<Double, Integer> entry : availablePlate.entrySet()) {
-			Double weight = entry.getKey();
-		    Integer numPlates = entry.getValue();
-		    
-		    int cursor = 0;
-		    int exit = 0;
-		    while (Double.compare(actualWeight, targetWeight) <= 0 && cursor < numPlates && exit == 0) {
-		    	
-		    	actualWeight += weight;
-			    if (actualWeight > targetWeight) {
-			    	exit = 1;
-			    	actualWeight -= weight;
-			    }
-			    else if (Double.compare(actualWeight, targetWeight) == 0) {
-			    	Operation newOp = new Operation("PUSH", weight);
-			    	opList.add(newOp);
-			    	return opList;
-			    }
-			    Operation newOp = new Operation("PUSH", weight);
-		    	opList.add(newOp);
-		    }
-		     
-		}
-		
-		
-		
-		return opList;
+	private double calculateTotalWeight(Deque<Plate> stack) {
+	    return stack.stream().mapToDouble(Plate::getWeight).sum();
 	}
-	
+
+	private List<Operation> findMinStepsToTarget(double targetWeight, Map<Double, Integer> availablePlates) {
+
+		List<Operation> bestSolution = new ArrayList<>();
+		List<Double> sortedWeights = new ArrayList<>(availablePlates.keySet());
+		sortedWeights.sort(Comparator.reverseOrder()); // Dischi grandi prima
+
+		findBestCombination(
+				targetWeight,
+				0,
+				new ArrayList<>(),
+				new HashMap<>(availablePlates), // copia per non modificare l'originale
+				sortedWeights,
+				bestSolution
+				);
+
+		return bestSolution;
+	}
+
+	private void findBestCombination(
+			double target,
+			double currentSum,
+			List<Operation> currentOps,
+			Map<Double, Integer> available,
+			List<Double> weights,
+			List<Operation> bestSolution
+			) {
+
+		if (Double.compare(currentSum, target) > 0) return;
+		
+		if (Double.compare(currentSum, target) == 0) {
+			// Se è la prima soluzione o migliore di quella precedente, salvala
+			if (bestSolution.isEmpty() || currentOps.size() < bestSolution.size()) {
+				bestSolution.clear();
+				bestSolution.addAll(new ArrayList<>(currentOps));
+				
+			}
+			return;
+		}
+
+	    // Calcolo euristica: stima min numero di dischi mancanti
+	    double remaining = target - currentSum;
+	    int minRemainingOps = estimateMinOps(remaining, available);
+	    if (!bestSolution.isEmpty() && currentOps.size() + minRemainingOps >= bestSolution.size()) {
+	        return; // potatura: anche il miglior caso sarebbe peggiore
+	    }
+	    
+		for (Double w : weights) {
+			int count = available.getOrDefault(w, 0); // controlla se è 0, con getOrDefault() gestiamo casi particolari (null unboxing) 
+			if (count == 0) continue; // se non ci sono dischi di quel peso, salta a quello successivo
+
+			// Prova ad aggiungere questo disco
+			available.put(w, count - 1);
+			currentOps.add(new Operation("PUSH", w));
+			
+			// ha senso continuare solo se non è peggiore o uguale alla miglior soluzione
+			if (bestSolution.isEmpty() || currentOps.size() < bestSolution.size()) { 
+				findBestCombination(target, currentSum + w, currentOps, available, weights, bestSolution);
+			}
+			// Backtracking
+			available.put(w, count);
+			currentOps.remove(currentOps.size() - 1);
+		}
+	}
+
+	private int estimateMinOps(double remaining, Map<Double, Integer> available) {
+		int ops = 0;
+		List<Double> sorted = new ArrayList<>(available.keySet());
+		sorted.sort(Collections.reverseOrder()); // Dischi grandi prima
+
+		for (double w : sorted) {
+			int count = available.get(w);
+			while (count > 0 && Double.compare(remaining, w - 1e-6) >= 0) {
+				remaining -= w;
+				count--;
+				ops++;
+			}
+			if (Double.compare(remaining, 1e-6) < 0) break;
+		}
+
+		return (Double.compare(remaining, 1e-6) < 0) ? ops : Integer.MAX_VALUE; // Se impossibile, scarta ramo
+	}
+
+
+
 	public PlateList getCombination(double targetWeight) {
 		PlateList combination = new PlateArrayList();
 		
-		List<Operation> idealOperation = CalcSteps(targetWeight, barbell.getLeft(), plateList.countPlatesByWeight());
+		List<Operation> idealOperation = findMinStepsToTarget(targetWeight, plateList.countPlatesByWeight());
 		
 		double differentWeight = ( targetWeight - barbell.getTotalWeight() ) / 2;
 		double weight = 0;
