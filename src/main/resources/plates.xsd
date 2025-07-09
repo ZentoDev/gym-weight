@@ -6,7 +6,7 @@
 				<xs:element name="barbell">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="weight" type="xs:string" />
+							<xs:element name="weightBarbell" type="xs:string" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>

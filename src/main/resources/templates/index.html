@@ -3,31 +3,60 @@
 <head>
   <title>Barbell Planner</title>
 </head>
-<body>
+<body onload="fetchBarbellSide()">
   <h1>Calcola combinazione pesi</h1>
   <input type="number" id="weightInput" placeholder="Peso target (kg)">
-  <button onclick="fetchCombination()">Calcola</button>
+  <button onclick="fetchCombination()" method = "post">Calcola</button>
 
   <h2>Risultato</h2>
+  <div id="barbellSide">Caricamento...</div>
   <ul id="result"></ul>
+  
+  <script type="text/javascript">
+    
+	function fetchBarbellSide() {
+      fetch('/side?side=left') // o "right"
+        .then(response => response.json())
+        .then(data => {
+          const output = document.getElementById('barbellSide');
 
-  <script type="text/javascript">	
+          if (data.length === 0) {
+            output.textContent = 'X';
+          } else {
+            output.textContent = data.join(' - ');
+          }
+        });
+    }
+
+    // Chiamata al caricamento della pagina
+    window.onload = fetchBarbellSide;
+
+  	
     function fetchCombination() {		
       const weight = document.getElementById("weightInput").value;
 	  
-      fetch(`/barbell/combination?targetWeight=${weight}`)
+      fetch(`/combination?targetWeight=${weight}`)
         .then(response => response.json())
         .then(data => {
           const list = document.getElementById("result");
           list.innerHTML = '';
 		  
-          data.forEach(operation => {
-            const li = document.createElement("li");
-            li.textContent = `${operation.action} -> ${operation.weight} kg`;
-            list.appendChild(li);
-          });
+		  const li = document.createElement("li");
+		  if (data.length === 0) {
+			li.textContent = 'Nessuna operazione';
+			list.appendChild(li);
+		  } else {
+			data.forEach(operation => {
+			const li = document.createElement("li");
+			li.textContent = `${operation.action} -> ${operation.weight} kg`;
+			list.appendChild(li);
+			});
+		  }
         });
-    }
+		setTimeout(() => {
+			fetchBarbellSide()    
+	    }, 100);
+	}
   </script>
 </body>
 </html>

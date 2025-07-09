@@ -23,9 +23,15 @@ public class BarbellController {
 		
 	}
 		
-    @GetMapping("/")
+    @GetMapping("/combination")
     public ResponseEntity<List<Operation>> getCombination(@RequestParam double targetWeight) {
     	List<Operation> result = barbellService.getCombination(targetWeight);
+    	result.forEach(op -> System.out.println(op.getAction() + " " + op.getWeight()));
         return ResponseEntity.ok(result);
+    }
+    
+    @GetMapping("/side")
+    public List<Double> getSideWeights(@RequestParam String side) {
+        return barbellService.getSideWeights(side); // es. ["left"] o ["right"]
     }
 }

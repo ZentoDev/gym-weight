@@ -1,7 +1,7 @@
 <weights xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="plates.xsd">
 	<barbell>
-		<weight>10</weight>
+		<weightBarbell>10</weightBarbell>
 	</barbell>
 	<plates>
 		<plate>

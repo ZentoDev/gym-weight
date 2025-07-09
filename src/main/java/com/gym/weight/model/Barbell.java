@@ -7,7 +7,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 
 public class Barbell {
 	
-	private double weightBarbell = 0; 
+	private double weightBarbell; 
 	private Deque<Plate> right;
 	private Deque<Plate> left;
 	
@@ -67,5 +67,4 @@ public class Barbell {
 		return weightBarbell + getRightWeight() + getLeftWeight();
 	}
 	
-
 }
