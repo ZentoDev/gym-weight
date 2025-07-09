@@ -1,22 +1,24 @@
 package com.gym.weight.repository;
 
-import java.io.File;
+import java.io.InputStream;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.gym.weight.model.Barbell;
 import com.gym.weight.model.Plate;
+import com.gym.weight.model.PlateArrayList;
 import com.gym.weight.model.PlateList;
 import com.gym.weight.model.Weights;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 
-@Repository("active")
+@Repository("activeRepository")
 public class XmlWeightsRepository implements IWeightsRepository{
 	
 	private Weights weights;
-	private String urlXml = "plates.xml";
+	InputStream input = getClass().getClassLoader().getResourceAsStream("plates.xml");
 	
 	public XmlWeightsRepository() {
 		try {
@@ -25,7 +27,7 @@ public class XmlWeightsRepository implements IWeightsRepository{
 			// Crea un oggetto Unmarshaller, cioè il "lettore" che trasforma XML in oggetti Java
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			// Legge il file XML e lo converte in un oggetto Weights
-			weights = (Weights) unmarshaller.unmarshal(new File(urlXml));
+			weights = (Weights) unmarshaller.unmarshal(input);
 			
 			// Accede ai dati dentro l'oggetto Weights creato da XML
             System.out.println("Peso bilanciere: " + weights.getBarbell().getWeightBarbell());
@@ -45,7 +47,7 @@ public class XmlWeightsRepository implements IWeightsRepository{
 		return weights.getBarbell();
 	}
 	@Override
-	public PlateList readPlates() {
+	public List<Plate> readPlates() {
 		return weights.getPlates();
 	}
 	

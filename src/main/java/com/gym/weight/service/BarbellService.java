@@ -16,36 +16,50 @@ import org.springframework.stereotype.Service;
 import com.gym.weight.model.Barbell;
 import com.gym.weight.model.Operation;
 import com.gym.weight.model.Plate;
-import com.gym.weight.model.PlateArrayList;
 import com.gym.weight.model.PlateList;
 import com.gym.weight.model.PlatesMap;
 import com.gym.weight.repository.IWeightsRepository;
 
-@Service("active")
+@Service("activeService")
 public class BarbellService {
 	
 	private Barbell barbell;
-	private PlateList plateList;
+	private List<Plate> plateList;
 	
 	
-	public BarbellService(@Qualifier("active") IWeightsRepository repository) {
-		this.barbell = repository.readBarbell();
-		this.plateList = repository.readPlates();
+	public BarbellService(@Qualifier("activeRepository") IWeightsRepository repository) {
+		
+	    try {
+	    	
+	        this.barbell = repository.readBarbell();
+	        if (this.barbell == null) {
+	            System.err.println("Warning: barbell is null!");
+	            this.barbell = new Barbell();
+	        }	        
+	        this.plateList = repository.readPlates();
+	        if (this.plateList == null) {
+	            System.err.println("Warning: plateList is null!");
+	            this.plateList = new ArrayList<>();
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw e;
+	    }
 	}
 		
-	public PlateList getCombination(double targetWeight) {
+	public List<Operation> getCombination(double targetWeight) {
 		
 		PlatesMap Plates = new PlatesMap(plateList);
-		PlateList combination = new PlateArrayList();
+		List<Operation> operation = new ArrayList<>();
 		
-		combination = Schedule(targetWeight, Plates, barbell);
+		operation = Schedule(targetWeight, Plates, barbell);
 					
-		return combination;
+		return operation;
 	}
 	
-	private PlateList Schedule(double targetWeight,  PlatesMap availablePlates, Barbell barbell) {
+	private List<Operation> Schedule(double targetWeight,  PlatesMap availablePlates, Barbell barbell) {
 		
-		PlateList combination = new PlateArrayList();
 		List<Operation> operation = new ArrayList<>();
 		
 		// ottengo il peso per un singolo lato del bilanciere
@@ -56,7 +70,7 @@ public class BarbellService {
 		applyOperationsToBarbellStack(barbell.getLeft(), operation, availablePlates);
 		applyOperationsToBarbellStack(barbell.getRight(), operation, availablePlates);
 		
-		return combination;
+		return operation;
 	}
 
 	

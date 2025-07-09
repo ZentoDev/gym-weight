@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Barbell Planner</title>
+</head>
+<body>
+  <h1>Calcola combinazione pesi</h1>
+  <input type="number" id="weightInput" placeholder="Peso target (kg)">
+  <button onclick="fetchCombination()">Calcola</button>
+
+  <h2>Risultato</h2>
+  <ul id="result"></ul>
+
+  <script type="text/javascript">	
+    function fetchCombination() {		
+      const weight = document.getElementById("weightInput").value;
+	  
+      fetch(`/barbell/combination?targetWeight=${weight}`)
+        .then(response => response.json())
+        .then(data => {
+          const list = document.getElementById("result");
+          list.innerHTML = '';
+		  
+          data.forEach(operation => {
+            const li = document.createElement("li");
+            li.textContent = `${operation.action} -> ${operation.weight} kg`;
+            list.appendChild(li);
+          });
+        });
+    }
+  </script>
+</body>
+</html>

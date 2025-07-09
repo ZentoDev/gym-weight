@@ -1,0 +1,31 @@
+package com.gym.weight.controller.api;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.gym.weight.model.Operation;
+import com.gym.weight.service.BarbellService;
+
+@RestController
+public class BarbellController {
+	
+	@Autowired
+	@Qualifier("activeService")
+	private BarbellService barbellService;
+	
+	public BarbellController() {
+		
+	}
+		
+    @GetMapping("/")
+    public ResponseEntity<List<Operation>> getCombination(@RequestParam double targetWeight) {
+    	List<Operation> result = barbellService.getCombination(targetWeight);
+        return ResponseEntity.ok(result);
+    }
+}

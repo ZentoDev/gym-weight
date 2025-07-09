@@ -9,11 +9,17 @@ public class Plate {
 	private double weight;
 	private String material;
 	
-	public Plate(double weight) {
-		this.weight = weight;
+	/*JAXB*/
+	public Plate() {
+		this.material = "";
 	}
 	
-	public Plate(int weight, String material) {
+	public Plate(double weight) {
+		this.weight = weight;
+		this.material = "";
+	}
+	
+	public Plate(double weight, String material) {
 		this(weight);
 		this.material = material;
 	}
@@ -26,6 +32,14 @@ public class Plate {
 	@XmlElement
 	public String getMaterial() {
 		return material;
+	}
+	
+	public void setWeight(double weight) {
+	    this.weight = weight;
+	}
+
+	public void setMaterial(String material) {
+	    this.material = material;
 	}
 
 }

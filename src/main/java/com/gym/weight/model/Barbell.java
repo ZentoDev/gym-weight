@@ -25,6 +25,9 @@ public class Barbell {
 	public double getWeightBarbell() {
 		return weightBarbell;
 	}
+	public void setWeightBarbell(double weight) {
+		this.weightBarbell = weight;
+	}
 	
 	public Deque<Plate> getRight() {
 		return right;

@@ -1,6 +1,7 @@
 package com.gym.weight.model;
 
 import java.util.Map.Entry;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -13,7 +14,7 @@ public class PlatesMap extends TreeMap<Double, PlateList>{
 		super();
 	}
 	
-	public PlatesMap(PlateList plates) {
+	public PlatesMap(List<Plate> plates) {
 	    for (Plate plate : plates) {
 	        this.addPlate(plate.getWeight(), plate);
 	    }
