@@ -1,8 +1,5 @@
 package com.gym.weight.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementWrapper;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -10,11 +7,11 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "weights")
 public class Weights {
     private Barbell barbell;
-    private List<Plate> plates;
+    private PlateList plates;
     
     public Weights() {
     	this.barbell = new Barbell();
-    	this.plates = new ArrayList<Plate>();
+    	this.plates = new PlateArrayList();
     }
     
     @XmlElement
@@ -28,11 +25,11 @@ public class Weights {
     
     @XmlElementWrapper(name="plates")
     @XmlElement(name = "plate")
-    public List<Plate> getPlates() {
+    public PlateList getPlates() {
         return plates;
     }
 
-    public void setPlates(List<Plate> plates) {
+    public void setPlates(PlateList plates) {
         this.plates = plates;
     }
 }

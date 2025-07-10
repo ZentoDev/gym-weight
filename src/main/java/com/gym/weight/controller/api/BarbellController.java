@@ -1,6 +1,7 @@
 package com.gym.weight.controller.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +33,11 @@ public class BarbellController {
     
     @GetMapping("/side")
     public List<Double> getSideWeights(@RequestParam String side) {
-        return barbellService.getSideWeights(side); // es. ["left"] o ["right"]
+        return barbellService.getSideWeights(side);
     }
+    
+	@GetMapping("/available")
+	public Map<Double, Integer> getAvailablePlates() {
+		return barbellService.getAvailablePlates();
+	}
 }

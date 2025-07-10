@@ -60,5 +60,14 @@ public class PlateArrayList extends ArrayList<Plate> implements PlateList{
 	public void sortListbyWeight() {
 		this.sort(Comparator.comparingDouble(Plate::getWeight).reversed());
 	}
+	
+	@Override
+	public double getMin() {
+		double min = Double.MAX_VALUE;
+		for (Plate p : this) {
+			if (p.getWeight() < min) min = p.getWeight();
+		}
+	    return min;
+	}
 
 }

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.gym.weight</groupId>
 	<artifactId>gym-weight</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>gym-weight</name>
 	<description>Web app for gym barbell weight calculator</description>
 	<url/>

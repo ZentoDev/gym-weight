@@ -41,12 +41,10 @@ public class PlatesMap extends TreeMap<Double, PlateList>{
 	            remove(weight); // pulizia
 	        }
 	        return removed;
-	    }
-	    
+	    }	    
 	    return null;
 	}
 	
-			
 	public int totalPlates() {
 		return values().stream().mapToInt(PlateList::size).sum();
 	}
@@ -61,8 +59,7 @@ public class PlatesMap extends TreeMap<Double, PlateList>{
 
         for (Entry<Double, PlateList> entry : this.entrySet()) {
             plateCounts.put(entry.getKey(), entry.getValue().size());
-        }
-        
+        }        
         return plateCounts;
     }
     
@@ -79,7 +76,6 @@ public class PlatesMap extends TreeMap<Double, PlateList>{
                 halfMap.addPlate(weight, plates.get(i));
             }
         }
-
         return halfMap;
     }
 }

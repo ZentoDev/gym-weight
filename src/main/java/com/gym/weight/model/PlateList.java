@@ -10,5 +10,6 @@ public interface PlateList extends List<Plate>{
 	public TreeMap<Double, Integer> countPlatesByWeight();
 	public Optional<Plate> dropPlateByWeight(double weight);
 	public void sortListbyWeight();
+	public double getMin();
 
 }

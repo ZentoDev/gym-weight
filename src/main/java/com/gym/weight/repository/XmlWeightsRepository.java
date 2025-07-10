@@ -1,13 +1,11 @@
 package com.gym.weight.repository;
 
 import java.io.InputStream;
-import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.gym.weight.model.Barbell;
 import com.gym.weight.model.Plate;
-import com.gym.weight.model.PlateArrayList;
 import com.gym.weight.model.PlateList;
 import com.gym.weight.model.Weights;
 
@@ -47,7 +45,7 @@ public class XmlWeightsRepository implements IWeightsRepository{
 		return weights.getBarbell();
 	}
 	@Override
-	public List<Plate> readPlates() {
+	public PlateList readPlates() {
 		return weights.getPlates();
 	}
 	

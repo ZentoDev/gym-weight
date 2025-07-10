@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import com.gym.weight.model.Barbell;
 import com.gym.weight.model.Operation;
 import com.gym.weight.model.Plate;
+import com.gym.weight.model.PlateArrayList;
+import com.gym.weight.model.PlateList;
 import com.gym.weight.model.PlatesMap;
 import com.gym.weight.repository.IWeightsRepository;
 
@@ -24,7 +26,8 @@ import com.gym.weight.repository.IWeightsRepository;
 public class BarbellService {
 	
 	private Barbell barbell;
-	private List<Plate> plateList;
+	private PlateList plateList;
+	PlatesMap Plates;
 	
 	
 	public BarbellService(@Qualifier("activeRepository") IWeightsRepository repository) {
@@ -39,22 +42,24 @@ public class BarbellService {
 	        this.plateList = repository.readPlates();
 	        if (this.plateList == null) {
 	            System.err.println("Warning: plateList is null!");
-	            this.plateList = new ArrayList<>();
+	            this.plateList = new PlateArrayList();
 	        }
 	        
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        throw e;
 	    }
+	    
+	    Plates = new PlatesMap(plateList);
 	}
 		
 	public List<Operation> getCombination(double targetWeight) {
 		
-		PlatesMap Plates = new PlatesMap(plateList);
+		
 		List<Operation> operation = new ArrayList<>();
 		
 		operation = Schedule(targetWeight, Plates, barbell);
-		operation.forEach(op -> System.out.println(op.getAction() + " " + op.getWeight()));
+		//operation.forEach(op -> System.out.println(op.getAction() + " " + op.getWeight()));
 					
 		return operation;
 	}
@@ -68,7 +73,7 @@ public class BarbellService {
 		double targetWeightBranch = (targetWeight - barbell.getWeightBarbell()) / 2;
 		System.out.println("weightBrach: "+targetWeightBranch+" = " + targetWeight +" - "+barbell.getWeightBarbell() + " / 2");
 		
-		operation = CalculateSteps(targetWeightBranch, PlatesMap.halfPlates(availablePlates), barbell.getLeft());
+		operation = CalculateSteps(targetWeightBranch, PlatesMap.halfPlates(availablePlates), barbell.getLeft(), plateList.getMin());
 		operation.forEach(op -> System.out.println(op.getAction() + " " + op.getWeight()));
 		applyOperationsToBarbellStack(barbell.getLeft(), operation, availablePlates);
 		applyOperationsToBarbellStack(barbell.getRight(), operation, availablePlates);
@@ -77,15 +82,11 @@ public class BarbellService {
 	}
 
 	
-	private List<Operation> CalculateSteps(double targetWeight,  PlatesMap availablePlates, Deque<Plate> barbellStack) {
+	private List<Operation> CalculateSteps(double targetWeight,  PlatesMap availablePlates, Deque<Plate> barbellStack, double tollerance) {
 		
 		List<Operation> bestSolution = new ArrayList<>();
 		List<Operation> solution = new ArrayList<>();
 		List<Operation> pullOp = new ArrayList<>();
-		List<Double> sortedWeights = new ArrayList<>(availablePlates.keySet());
-		
-		sortedWeights.sort(Comparator.reverseOrder()); // Dischi grandi prima
-		double minWeight = sortedWeights.getLast();
 		
 		Deque<Plate> barbellStackCPY = new ArrayDeque<>(barbellStack); // copia per non modificare l'originale
 		
@@ -96,12 +97,11 @@ public class BarbellService {
 			
 			System.out.println(barbellweight + " - " + targetWeight);
 			System.out.println("for " + currentStack);
-			System.out.println("Double.compare(" + Math.abs(diffWeight) + ", " + minWeight + ") < 0");
+			System.out.println("Double.compare(" + Math.abs(diffWeight) + ", " + tollerance + ") < 0  /* se differenza peso nell'intorno valore minimo considero soluzione accettabile*/");
 			
 			/* se la differenza di peso è nell'intorno di un valore minimo (solitamente il disco più piccolo) 
 			 * considero la soluzione accettabile   */
-		    if (Double.compare(Math.abs(diffWeight), minWeight) < 0) {
-		    	System.out.println("Sol Double.compare(" + Math.abs(diffWeight) + ", " + minWeight + ") < 0");
+		    if (Double.compare(Math.abs(diffWeight), tollerance) < 0) {		    	
 		    	
 		    	// bilanciere già caricato correttamente
 		    	if (bestSolution.isEmpty() && solution.isEmpty()) {
@@ -111,6 +111,7 @@ public class BarbellService {
 		    	
 		    	// valuto se è miglior soluzione
 		    	else if (bestSolution.isEmpty() || solution.size() < bestSolution.size()) {
+		    		System.out.println("new best sol");
 		    		bestSolution.clear();
 					bestSolution.addAll(new ArrayList<>(solution));
 		    	}
@@ -118,6 +119,7 @@ public class BarbellService {
 		    
 		    // Se il numero di PULL supera la soluzione ideale è inutile continuare
 		    if (!bestSolution.isEmpty() && bestSolution.size() <= (barbellStack.size() - currentStack)) {
+		    	System.out.println("troppi PULL, return Best");
 		    	return bestSolution;
 		    }
 		    
@@ -125,11 +127,11 @@ public class BarbellService {
 		    solution = new ArrayList<>(pullOp);
 		    
 		    // entro se il peso è inferiore a quello richiesto (eventuali PUSH)
-		    if(Double.compare(diffWeight, -minWeight) <= 0) {
-			    System.out.println("PUSH Double.compare(" + diffWeight + ", " + -minWeight + ") < 0");
-		    	List<Operation> steps = new ArrayList<>(findMinStepsToTarget(-diffWeight, minWeight, new TreeMap<>(availablePlates.toCountMap())));
+		    if(Double.compare(diffWeight, -tollerance) <= 0) {
+			    System.out.println("PUSH Double.compare(" + diffWeight + ", " + -tollerance + ") < 0");
+		    	List<Operation> steps = new ArrayList<>(findMinStepsToTarget(-diffWeight, tollerance, new TreeMap<>(availablePlates.toCountMap())));
 		    	// se vuoto non è stata trovata soluzione
-		    	if (!steps.isEmpty()) {
+		    	if (!steps.isEmpty() && steps != null) {
 		    		System.out.println("steps");
 		    		solution.addAll(steps);
 		    		applyOperationsToBarbellStack(barbellStackCPY, steps, availablePlates);
@@ -144,9 +146,9 @@ public class BarbellService {
 			}
 			
 			// diffWeight > minWeight
-			double w = barbellStackCPY.getLast().getWeight();
-			System.out.println("call");
-			availablePlates.addPlate(w, barbellStackCPY.removeLast());
+			double w = barbellStackCPY.getLast().getWeight();		
+			System.out.println("PULL " + barbellStack.peekLast().getWeight());
+			availablePlates.addPlate(w, barbellStackCPY.removeLast());			
 			pullOp.add(new Operation("PULL", w));
 			solution = new ArrayList<>(pullOp);
 			
@@ -299,6 +301,10 @@ public class BarbellService {
 	    return stack.stream()
 	                .map(Plate::getWeight)
 	                .collect(Collectors.toList());
+	}
+	
+	public Map<Double, Integer> getAvailablePlates() {
+		return Plates.toCountMap();
 	}
 
 }
