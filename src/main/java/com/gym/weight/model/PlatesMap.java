@@ -24,7 +24,7 @@ public class PlatesMap extends TreeMap<Double, PlateList>{
 	    PlatesMap map = new PlatesMap();
 	    for (Plate plate : plates) {
 	        double weight = plate.getWeight();
-	        map.addPlate(weight, plate);  // usa il tuo metodo che fa computeIfAbsent
+	        map.addPlate(weight, plate);  // usa il metodo che fa computeIfAbsent
 	    }
 	    return map;
 	}
